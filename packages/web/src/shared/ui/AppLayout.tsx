@@ -6,6 +6,7 @@ import Stack from '@mui/material/Stack';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { NavLink, Outlet } from 'react-router';
+import { SnackbarProvider } from './SnackbarProvider';
 
 /**
  * Navigation shared by both pages.
@@ -16,38 +17,50 @@ import { NavLink, Outlet } from 'react-router';
  *
  * `NavLink` sets `aria-current="page"` on the active route by itself, so the
  * current location is announced to a screen reader as well as shown visually.
+ *
+ * Snackbars are provided from here rather than above the router. A snackbar can
+ * carry an action such as "View articles", and a <Link> rendered outside the
+ * router context throws — mounting the provider inside the route tree is what
+ * gives those actions somewhere to navigate from.
  */
 export function AppLayout() {
   return (
-    <Box sx={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column' }}>
-      <AppBar position="static" color="inherit" sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Container maxWidth="lg" disableGutters>
-          <Toolbar disableGutters sx={{ px: { xs: 2, sm: 3 }, gap: 2 }}>
-            <Typography
-              variant="h1"
-              sx={{ fontSize: '1.125rem', fontWeight: 700, flexGrow: 1, letterSpacing: '-0.01em' }}
-            >
-              News Articles
-            </Typography>
+    <SnackbarProvider>
+      <Box sx={{ minHeight: '100dvh', display: 'flex', flexDirection: 'column' }}>
+        <AppBar position="static" color="inherit" sx={{ borderBottom: 1, borderColor: 'divider' }}>
+          <Container maxWidth="lg" disableGutters>
+            <Toolbar disableGutters sx={{ px: { xs: 2, sm: 3 }, gap: 2 }}>
+              <Typography
+                variant="h1"
+                sx={{
+                  fontSize: '1.125rem',
+                  fontWeight: 700,
+                  flexGrow: 1,
+                  letterSpacing: '-0.01em',
+                }}
+              >
+                News Articles
+              </Typography>
 
-            <Stack direction="row" component="nav" aria-label="Main" spacing={0.5}>
-              <Button component={NavLink} to="/articles" end sx={navLinkStyles}>
-                Browse
-              </Button>
-              <Button component={NavLink} to="/articles/new" sx={navLinkStyles}>
-                New article
-              </Button>
-            </Stack>
-          </Toolbar>
-        </Container>
-      </AppBar>
+              <Stack direction="row" component="nav" aria-label="Main" spacing={0.5}>
+                <Button component={NavLink} to="/articles" end sx={navLinkStyles}>
+                  Browse
+                </Button>
+                <Button component={NavLink} to="/articles/new" sx={navLinkStyles}>
+                  New article
+                </Button>
+              </Stack>
+            </Toolbar>
+          </Container>
+        </AppBar>
 
-      <Box component="main" sx={{ flexGrow: 1, py: { xs: 2, sm: 3 } }}>
-        <Container maxWidth="lg">
-          <Outlet />
-        </Container>
+        <Box component="main" sx={{ flexGrow: 1, py: { xs: 2, sm: 3 } }}>
+          <Container maxWidth="lg">
+            <Outlet />
+          </Container>
+        </Box>
       </Box>
-    </Box>
+    </SnackbarProvider>
   );
 }
 

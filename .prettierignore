@@ -1,0 +1,12 @@
+node_modules
+dist
+coverage
+playwright-report
+test-results
+package-lock.json
+*.db
+
+# The assignment brief as supplied by Handshakes. Left byte-for-byte as received
+# so the diff against upstream stays meaningful. It moves to docs/ASSIGNMENT.md
+# when this README is replaced with the project's own.
+README.md

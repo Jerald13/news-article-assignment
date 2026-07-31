@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "lib": ["ES2023"],
+    // TypeScript 6 no longer auto-includes every @types package. This package
+    // is environment-agnostic on purpose — it must compile for both the DOM
+    // and node — so it declares no ambient types at all.
+    "types": []
+  },
+  "include": ["src"]
+}

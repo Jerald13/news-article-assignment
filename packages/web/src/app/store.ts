@@ -1,8 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query';
 import { useDispatch, useSelector } from 'react-redux';
+import type { Article } from '@news/contracts';
 import { articlesApi } from '@/features/articles';
 import { env } from '@/shared/config/env';
+import { attachConsoleHelpers, loggerMiddleware } from './devtools';
 
 /**
  * Build a store.
@@ -19,7 +21,14 @@ export function createStore() {
     reducer: {
       [articlesApi.reducerPath]: articlesApi.reducer,
     },
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(articlesApi.middleware),
+    middleware: (getDefaultMiddleware) => {
+      const middleware = getDefaultMiddleware().concat(articlesApi.middleware);
+
+      // Added last so it observes the state *after* the API middleware has
+      // handled the action, which is what makes the "next state" it prints the
+      // real one rather than an intermediate.
+      return env.isDevelopment ? middleware.concat(loggerMiddleware) : middleware;
+    },
 
     // Naming the instance makes it identifiable in the Redux DevTools
     // dropdown rather than appearing as an anonymous store.
@@ -63,18 +72,15 @@ declare global {
   interface Window {
     /** Development-only handle for inspecting Redux from the browser console. */
     store?: AppStore;
+    /** Development-only getter: the current state tree. */
+    readonly state?: RootState;
+    /** Development-only getter: articles held in the RTK Query cache. */
+    readonly articles?: Article[];
   }
 }
 
-// Exposed in development only, so the store can be inspected without the
-// DevTools extension installed:
-//
-//   store.getState()                      the whole tree
-//   store.getState().articlesApi.queries  every cached request and its data
-//   store.dispatch(...)                   drive it by hand
-//
-// Guarded by the dev flag so it is stripped from the production bundle and
-// never becomes a foothold on a real deployment.
+// Console helpers, development only, so they are stripped from the production
+// bundle and never become a foothold on a real deployment.
 if (env.isDevelopment) {
-  window.store = store;
+  attachConsoleHelpers(store);
 }

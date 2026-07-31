@@ -6,7 +6,6 @@ test-results
 package-lock.json
 *.db
 
-# The assignment brief as supplied by Handshakes. Left byte-for-byte as received
-# so the diff against upstream stays meaningful. It moves to docs/ASSIGNMENT.md
-# when this README is replaced with the project's own.
-README.md
+# The assignment brief as supplied by Handshakes, kept byte-for-byte apart from
+# a repaired image link, so it stays a faithful record of what was asked for.
+docs/ASSIGNMENT.md

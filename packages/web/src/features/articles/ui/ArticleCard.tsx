@@ -1,16 +1,14 @@
-import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
-import IconButton from '@mui/material/IconButton';
 import Paper from '@mui/material/Paper';
-import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import type { Article } from '@news/contracts';
-import { Link } from 'react-router';
 import { formatArticleDate, toSummaryPoints } from '../model/formatArticleDate';
+import { ArticleActionsMenu } from './ArticleActionsMenu';
 
 export interface ArticleCardProps {
   article: Article;
+  onDelete: (article: Article) => void;
 }
 
 /**
@@ -26,7 +24,7 @@ export interface ArticleCardProps {
  * dispatch, or know that Redux exists. That is what makes it trivial to test
  * and safe to reuse.
  */
-export function ArticleCard({ article }: ArticleCardProps) {
+export function ArticleCard({ article, onDelete }: ArticleCardProps) {
   const summaryPoints = toSummaryPoints(article.summary);
 
   return (
@@ -54,17 +52,7 @@ export function ArticleCard({ article }: ArticleCardProps) {
           </Typography>
         </Box>
 
-        <Tooltip title="Edit article">
-          <IconButton
-            component={Link}
-            to={`/articles/${article.id}/edit`}
-            size="small"
-            aria-label={`Edit ${article.title}`}
-            sx={{ flexShrink: 0 }}
-          >
-            <EditOutlinedIcon fontSize="small" />
-          </IconButton>
-        </Tooltip>
+        <ArticleActionsMenu article={article} onDelete={onDelete} />
       </Box>
 
       <Divider sx={{ mt: 2 }} />

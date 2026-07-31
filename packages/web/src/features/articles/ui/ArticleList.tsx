@@ -7,6 +7,7 @@ export interface ArticleListProps {
   articles: Article[];
   meta: PaginationMeta;
   onPageChange: (page: number) => void;
+  onDelete: (article: Article) => void;
 }
 
 /**
@@ -19,12 +20,12 @@ export interface ArticleListProps {
  * The pager is hidden on a single page rather than shown disabled — controls
  * that can never do anything are noise.
  */
-export function ArticleList({ articles, meta, onPageChange }: ArticleListProps) {
+export function ArticleList({ articles, meta, onPageChange, onDelete }: ArticleListProps) {
   return (
     <Box>
       <Box sx={{ display: 'grid', gap: 2 }}>
         {articles.map((article) => (
-          <ArticleCard key={article.id} article={article} />
+          <ArticleCard key={article.id} article={article} onDelete={onDelete} />
         ))}
       </Box>
 

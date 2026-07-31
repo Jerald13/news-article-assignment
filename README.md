@@ -201,6 +201,7 @@ Two real defects were found by that audit and fixed: the design mock's accent te
 - **Authentication**, with articles owned by a publisher account and routes protected accordingly.
 - **A visual regression check** on the card layout, since the design match is currently verified by eye.
 - **Rate limiting and request logging** on the API, which a real deployment would need on day one.
+- **Route-based code splitting.** The bundle is ~259 kB gzipped, most of it MUI. `React.lazy` on the two routes would let the form's dependencies load only when someone navigates to it.
 
 ---
 

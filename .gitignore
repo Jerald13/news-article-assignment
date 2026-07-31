@@ -38,6 +38,17 @@ yarn-error.log*
 Thumbs.db
 *.swp
 
+# local working notes — planning docs that are not part of the deliverable.
+# Anchored to the repo root so docs/ARCHITECTURE.md and README.md stay tracked:
+# README.md is an explicit requirement of the brief, not an optional extra.
+/PLAN.md
+/SKILLS.md
+/GIT-WORKFLOW.md
+/ARCHITECTURE.md
+/PROGRESS.md
+/notes/
+/scratch/
+
 # misc
 .cache/
 .temp/

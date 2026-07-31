@@ -6,7 +6,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Stack from '@mui/material/Stack';
 import TextField from '@mui/material/TextField';
 import { ARTICLE_FIELD_LIMITS, type ArticleInput, articleInputSchema } from '@news/contracts';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type MouseEvent } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link } from 'react-router';
 import { hasFieldErrors } from '@/shared/api/ApiError';
@@ -16,6 +16,40 @@ const EMPTY_ARTICLE: ArticleInput = { title: '', summary: '', date: '', publishe
 
 /** Field order, used to focus the first invalid input after a server rejection. */
 const FIELD_ORDER: (keyof ArticleInput)[] = ['title', 'summary', 'date', 'publisher'];
+
+/**
+ * Open the native date picker from a click anywhere in the field.
+ *
+ * By default a date input only opens its calendar from the small icon at the
+ * right edge; clicking the rest of the control just places a caret in one of
+ * the dd/mm/yyyy segments. That is a tiny target, and most people expect the
+ * whole field to be clickable.
+ *
+ * `showPicker()` requires user activation, which a click provides. It throws
+ * rather than returning a value if the browser refuses — for instance if the
+ * input is hidden — so the call is guarded.
+ *
+ * The trade-off: while the native picker is open it owns the keyboard, so
+ * clicking the field and then typing the date does not work. Both keyboard
+ * routes remain — tabbing into the field types straight into the segments, and
+ * Escape dismisses the picker and hands the keyboard back. Clicking to pick is
+ * how most people use a date field; typing is the power-user path and is still
+ * available.
+ */
+function openNativeDatePicker(event: MouseEvent<HTMLElement>): void {
+  const input = event.currentTarget.querySelector('input');
+
+  if (!(input instanceof HTMLInputElement) || typeof input.showPicker !== 'function') {
+    return;
+  }
+
+  try {
+    input.showPicker();
+  } catch {
+    // Some browsers refuse outside a trusted gesture. Falling back to the
+    // icon is a degraded experience, not a broken one.
+  }
+}
 
 export interface ArticleFormProps {
   defaultValues?: ArticleInput;
@@ -153,13 +187,19 @@ export function ArticleForm({
           id="article-date"
           label="Article date"
           type="date"
+          onClick={openNativeDatePicker}
           error={Boolean(errors.date)}
-          helperText={errors.date?.message ?? 'The date the article was published.'}
+          helperText={errors.date?.message ?? 'Click to pick a date, or tab in to type it.'}
           slotProps={{
             // A date input always renders a value, so the label must stay
             // shrunk or it overlaps the placeholder text.
             inputLabel: { shrink: true },
-            htmlInput: { max: new Date().toISOString().slice(0, 10) },
+            htmlInput: {
+              max: new Date().toISOString().slice(0, 10),
+              // The whole control opens the picker, so a pointer is the honest
+              // cursor for it rather than a text caret.
+              style: { cursor: 'pointer' },
+            },
           }}
         />
 

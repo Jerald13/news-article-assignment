@@ -38,6 +38,17 @@ npm run build       # production build
 
 `npm run test:e2e` drives your locally installed Chrome, so there is no browser download.
 
+### Inspecting state
+
+Redux DevTools works out of the box — the store is registered as **News Articles**. Without the extension, the store is also on `window` in development:
+
+```js
+store.getState(); // the whole tree
+store.getState().articlesApi.queries; // every cached request, its status and its data
+```
+
+Both are development-only and stripped from a production build.
+
 ---
 
 ## What it does

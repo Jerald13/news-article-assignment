@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+
+# A newer push makes an in-flight run obsolete; cancelling frees the runner and
+# stops a stale red cross arriving after a green one.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Typecheck, lint, test, build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          # Matches the engines field. React Router 8 and node:sqlite both
+          # require >= 22.22, and node:sqlite is why there is no build toolchain
+          # step here: nothing native has to compile.
+          node-version: '24'
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Check formatting
+        run: npm run format:check
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+  e2e:
+    name: End-to-end and accessibility
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      # The suite runs against Chrome via `channel`, so only that browser is
+      # fetched rather than the full Playwright bundle.
+      - name: Install Chrome for Playwright
+        run: npx playwright install chrome --with-deps
+        working-directory: packages/web
+
+      - name: Run end-to-end tests
+        run: npm run test:e2e
+
+      - name: Upload report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: packages/web/playwright-report/
+          retention-days: 7

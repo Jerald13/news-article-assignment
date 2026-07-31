@@ -28,7 +28,10 @@ export const ARTICLE_FIELD_LIMITS = {
  * rejected rather than accepted as "filled".
  */
 export const articleDateSchema = z
-  .string()
+  // The message is repeated on the type check because Zod validates the type
+  // first: a field that is absent entirely never reaches .min(1), and would
+  // otherwise surface Zod's default "expected string, received undefined".
+  .string({ error: 'Article date is required' })
   .trim()
   .min(1, 'Article date is required')
   .regex(ISO_DATE_PATTERN, 'Enter the date as YYYY-MM-DD')
@@ -41,7 +44,7 @@ export const articleDateSchema = z
 /** What a client may send when creating or updating an article. */
 export const articleInputSchema = z.object({
   title: z
-    .string()
+    .string({ error: 'Article title is required' })
     .trim()
     .min(1, 'Article title is required')
     .max(
@@ -50,7 +53,7 @@ export const articleInputSchema = z.object({
     ),
 
   summary: z
-    .string()
+    .string({ error: 'Article summary is required' })
     .trim()
     .min(1, 'Article summary is required')
     .max(
@@ -61,7 +64,7 @@ export const articleInputSchema = z.object({
   date: articleDateSchema,
 
   publisher: z
-    .string()
+    .string({ error: 'Publisher is required' })
     .trim()
     .min(1, 'Publisher is required')
     .max(

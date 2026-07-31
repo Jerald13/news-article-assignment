@@ -85,6 +85,24 @@ describe('articleInputSchema — required fields', () => {
 
     expect(articleInputSchema.safeParse(incomplete).success).toBe(false);
   });
+
+  it.each(requiredFields)('gives a missing %s the same human message as an empty one', (field) => {
+    // Zod checks the type before the length, so a field that is absent
+    // entirely never reaches .min(1). Without a message on the type check it
+    // would surface "Invalid input: expected string, received undefined" —
+    // developer jargon shown to a user.
+    const { [field]: _omitted, ...incomplete } = validInput;
+
+    const missing = toFieldErrors(articleInputSchema.safeParse(incomplete).error!);
+    const empty = toFieldErrors(
+      articleInputSchema.safeParse({ ...validInput, [field]: '' }).error!,
+    );
+
+    expect(missing.find((e) => e.field === field)?.message).toBe(
+      empty.find((e) => e.field === field)?.message,
+    );
+    expect(missing.find((e) => e.field === field)?.message).not.toMatch(/expected string/i);
+  });
 });
 
 describe('articleInputSchema — length limits', () => {

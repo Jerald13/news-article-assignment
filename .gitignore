@@ -1,0 +1,44 @@
+# dependencies
+node_modules/
+
+# build output
+dist/
+build/
+*.tsbuildinfo
+
+# test output
+coverage/
+playwright-report/
+test-results/
+.playwright/
+
+# environment — the example IS committed, real values are not
+.env
+.env.*
+!.env.example
+
+# database artefacts (the migration and seed scripts are committed, the data file is not)
+*.db
+*.db-wal
+*.db-shm
+data/
+
+# logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-error.log*
+
+# editor / OS
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+
+# misc
+.cache/
+.temp/
+*.local

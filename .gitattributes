@@ -1,0 +1,18 @@
+# Normalise line endings so Windows/macOS/Linux checkouts produce identical diffs.
+# Without this, core.autocrlf=true on Windows makes every file look fully rewritten.
+* text=auto eol=lf
+
+# Keep shell scripts LF even on Windows.
+*.sh text eol=lf
+
+# Binary assets — never touch, never diff.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+
+# SQLite artefacts are binary and untracked, but be explicit.
+*.db binary

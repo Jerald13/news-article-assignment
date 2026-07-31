@@ -45,7 +45,7 @@ Design a web page to fetch and display the articles from the database.
 * Provide a navigation link to the update article.
 
 Sample page design for guidance
-![Display Page Design](https://github.com/chunyang-hs/news-article/blob/master/sample-display-page-design.png)
+![Display Page Design](../sample-display-page-design.png)
 
 ### Bonus (Optional):
 You may also consider adding the following features if times permit:

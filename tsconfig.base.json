@@ -1,0 +1,36 @@
+{
+  // Shared compiler options for every workspace. Each package extends this and
+  // adds only what is specific to its environment (DOM vs node, JSX, paths).
+  "compilerOptions": {
+    "target": "ES2023",
+    "moduleDetection": "force",
+
+    // --- Correctness ---------------------------------------------------------
+    // TypeScript 6 enables `strict` by default; it is listed explicitly so the
+    // intent survives any future default change.
+    "strict": true,
+    // Indexing an array or record yields `T | undefined`. Catches the classic
+    // `items[0].title` crash on an empty result set.
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+
+    // --- Hygiene -------------------------------------------------------------
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "forceConsistentCasingInFileNames": true,
+
+    // --- Module semantics ----------------------------------------------------
+    // `verbatimModuleSyntax` forces `import type` for type-only imports, which
+    // keeps the emitted graph honest and avoids accidental runtime imports.
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "resolveJsonModule": true,
+
+    // Type checking is a separate step from bundling in this project: Vite and
+    // tsx handle transpilation, `tsc --noEmit` handles correctness.
+    "noEmit": true,
+    "skipLibCheck": true
+  }
+}

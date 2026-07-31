@@ -1,0 +1,18 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "module": "ESNext",
+    // `bundler` resolution because tsx executes the TypeScript directly; there
+    // is no emit step, so imports need no .js extensions.
+    "moduleResolution": "bundler",
+    "lib": ["ES2023"],
+    // Explicit under TypeScript 6, which defaults `types` to [].
+    "types": ["node"],
+    // No `baseUrl` — deprecated in TypeScript 6, removed in 7. Since TS 5,
+    // `paths` entries resolve relative to this file, which is what we want.
+    "paths": {
+      "@news/contracts": ["../contracts/src/index.ts"]
+    }
+  },
+  "include": ["src", "tests"]
+}

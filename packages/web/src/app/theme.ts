@@ -11,9 +11,17 @@ const tokens = {
   /** Page canvas: the pale grey the white cards sit on. */
   canvas: '#f4f6f8',
   surface: '#ffffff',
-  /** The teal of the "N ARTICLES FOUND" header and the pagination controls. */
-  accent: '#00838f',
-  accentDark: '#006064',
+  /**
+   * The teal of the "N ARTICLES FOUND" header and the pagination controls.
+   *
+   * The mock's #00838f measures 4.17:1 on the canvas and 4.15:1 on the hover
+   * grey — just under the 4.5:1 WCAG AA threshold for text this size, which an
+   * axe audit flagged as a serious violation. Darkened one step to #00767f,
+   * which clears AA on every background used here (4.97 / 4.94 / 5.39) while
+   * staying as close to the supplied colour as the requirement allows.
+   */
+  accent: '#00767f',
+  accentDark: '#005a61',
   headline: '#1f2933',
   body: '#3e4c59',
   /** Uppercase publisher/date micro-text. Dark enough to clear 4.5:1 on white. */
@@ -77,6 +85,21 @@ export const theme = createTheme({
         ':focus-visible': {
           outline: `2px solid ${tokens.accent}`,
           outlineOffset: '2px',
+        },
+      },
+    },
+
+    // MuiButtonBase sets `outline: 0` on its root, which beats the bare
+    // `:focus-visible` rule above on specificity — so every button, icon button
+    // and menu item silently lost its focus ring. Caught by an automated check
+    // that tabbed to the first control and read its computed outline.
+    MuiButtonBase: {
+      styleOverrides: {
+        root: {
+          '&:focus-visible': {
+            outline: `2px solid ${tokens.accent}`,
+            outlineOffset: '2px',
+          },
         },
       },
     },

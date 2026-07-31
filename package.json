@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Two-page news article CRUD application — React 19, TypeScript, Express and SQLite",
+  "description": "Two-page news article CRUD application \u2014 React 19, TypeScript, Express and SQLite",
   "engines": {
     "node": ">=22.22.0"
   },
@@ -23,7 +23,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "npm run test --workspaces --if-present",
-    "verify": "npm run typecheck && npm run lint && npm run test"
+    "verify": "npm run typecheck && npm run lint && npm run format:check && npm run test",
+    "test:e2e": "npm run test:e2e --workspace @news/web"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

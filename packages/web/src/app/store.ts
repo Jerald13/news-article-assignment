@@ -3,7 +3,6 @@ import { setupListeners } from '@reduxjs/toolkit/query';
 import { useDispatch, useSelector } from 'react-redux';
 import type { Article } from '@news/contracts';
 import { articlesApi } from '@/features/articles';
-import { env } from '@/shared/config/env';
 import { attachConsoleHelpers, loggerMiddleware } from './devtools';
 
 /**
@@ -27,12 +26,18 @@ export function createStore() {
       // Added last so it observes the state *after* the API middleware has
       // handled the action, which is what makes the "next state" it prints the
       // real one rather than an intermediate.
-      return env.isDevelopment ? middleware.concat(loggerMiddleware) : middleware;
+      //
+      // `import.meta.env.DEV` rather than the `env` helper: Vite substitutes the
+      // literal at build time, so the branch folds to `false` and the whole
+      // devtools module is tree-shaken out. Reading it through an object
+      // property defeats that — the code never runs in production, but every
+      // string in it still ships.
+      return import.meta.env.DEV ? middleware.concat(loggerMiddleware) : middleware;
     },
 
     // Naming the instance makes it identifiable in the Redux DevTools
     // dropdown rather than appearing as an anonymous store.
-    devTools: env.isDevelopment && { name: 'News Articles' },
+    devTools: import.meta.env.DEV && { name: 'News Articles' },
   });
 
   // Enables refetchOnFocus / refetchOnReconnect for any endpoint that opts in.
@@ -79,8 +84,9 @@ declare global {
   }
 }
 
-// Console helpers, development only, so they are stripped from the production
-// bundle and never become a foothold on a real deployment.
-if (env.isDevelopment) {
+// Console helpers, development only. The literal keeps this eliminable at
+// build time, so none of it reaches a real deployment — verified by grepping
+// the production bundle, not assumed.
+if (import.meta.env.DEV) {
   attachConsoleHelpers(store);
 }

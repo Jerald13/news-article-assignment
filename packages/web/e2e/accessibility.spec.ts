@@ -155,17 +155,25 @@ test.describe('keyboard operation', () => {
 
   test('focus is visible wherever it lands', async ({ page }) => {
     await page.goto('/articles');
+
+    // Wait for a real control before tabbing. `goto` resolves on load, which can
+    // precede React rendering the header — and a Tab pressed before there is
+    // anything focusable leaves focus on <body>, whose computed outline style is
+    // 'none'. That read as a genuine failure and was the source of this test's
+    // flakiness in CI.
+    await page.getByRole('link', { name: 'Browse' }).waitFor();
     await page.keyboard.press('Tab');
 
-    const outline = await page.evaluate(() => {
+    const focused = await page.evaluate(() => {
       const el = document.activeElement;
-      if (!el) return null;
+      if (!el || el === document.body) return null;
       const style = getComputedStyle(el);
-      return { width: style.outlineWidth, style: style.outlineStyle };
+      return { tag: el.tagName, width: style.outlineWidth, style: style.outlineStyle };
     });
 
+    expect(focused, 'Tab should move focus to a control, not the body').not.toBeNull();
     // outline: none on a focused control makes the page unusable by keyboard.
-    expect(outline?.style).not.toBe('none');
+    expect(focused?.style).not.toBe('none');
   });
 });
 

@@ -51,10 +51,15 @@ export default tseslint.config(
     },
   },
 
-  // Plain JS config files are not part of any tsconfig project.
+  // Plain JS config files and node scripts belong to no tsconfig project, so
+  // type-aware rules have nothing to read and the project service errors on
+  // them. `.mjs` and `.cjs` matter as much as `.js` here — scripts/ uses them.
   {
-    files: ['**/*.js'],
+    files: ['**/*.{js,mjs,cjs}'],
     extends: [tseslint.configs.disableTypeChecked],
+    languageOptions: {
+      globals: globals.node,
+    },
   },
 
   // ---------------------------------------------------------------------------

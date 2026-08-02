@@ -160,10 +160,18 @@ export function ArticleForm({
       ) : null}
 
       <Stack spacing={3}>
+        {/*
+          `required` marks the label with an asterisk and sets the attribute
+          screen readers announce as "required". It does not enable native
+          browser validation here: the form carries `noValidate`, so constraint
+          checking stays with the resolver and every message keeps coming from
+          the one shared schema.
+        */}
         <TextField
           {...register('title')}
           id="article-title"
           label="Article title"
+          required
           error={Boolean(errors.title)}
           helperText={errors.title?.message ?? `Up to ${ARTICLE_FIELD_LIMITS.title} characters`}
           autoComplete="off"
@@ -174,6 +182,7 @@ export function ArticleForm({
           {...register('summary')}
           id="article-summary"
           label="Article summary"
+          required
           multiline
           minRows={4}
           error={Boolean(errors.summary)}
@@ -186,6 +195,7 @@ export function ArticleForm({
           {...register('date')}
           id="article-date"
           label="Article date"
+          required
           type="date"
           onClick={openNativeDatePicker}
           error={Boolean(errors.date)}
@@ -207,6 +217,7 @@ export function ArticleForm({
           {...register('publisher')}
           id="article-publisher"
           label="Publisher"
+          required
           error={Boolean(errors.publisher)}
           helperText={errors.publisher?.message ?? 'The masthead that published it.'}
           autoComplete="organization"

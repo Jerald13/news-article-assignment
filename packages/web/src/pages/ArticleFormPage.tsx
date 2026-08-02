@@ -122,8 +122,8 @@ export function ArticleFormPage() {
         </Typography>
         <Typography variant="body1" sx={{ mt: 1 }}>
           {isEditing
-            ? 'Update the details below and save your changes.'
-            : 'All four fields are required. The form clears after saving so you can add another.'}
+            ? 'All four fields are required, marked with an asterisk. Update the details below and save your changes.'
+            : 'All four fields are required, marked with an asterisk. The form clears after saving so you can add another.'}
         </Typography>
       </Box>
 

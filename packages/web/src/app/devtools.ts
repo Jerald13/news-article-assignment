@@ -99,6 +99,41 @@ export const loggerMiddleware: Middleware = (api) => (next) => (action) => {
   return result;
 };
 
+export interface CacheEntrySummary {
+  /** The endpoint and arguments this entry is keyed by. */
+  query: string;
+  /** How many articles the entry holds. */
+  rows: number;
+  /** How many mounted components are watching it. */
+  subscribers: number;
+}
+
+/**
+ * One row per cache entry, for `console.table(cache)`.
+ *
+ * `subscribers` is the interesting column: it decides what a tag invalidation
+ * does to the entry. Anything being watched is refetched in place; anything at
+ * zero is dropped from the store outright.
+ */
+function summariseCache(state: RootState): CacheEntrySummary[] {
+  const { queries, subscriptions } = state.articlesApi;
+
+  return Object.entries(queries).map(([key, entry]) => {
+    const data: unknown = entry?.data;
+    let rows = 0;
+
+    if (typeof data === 'object' && data !== null && 'data' in data) {
+      const { data: list } = data as Paginated<Article>;
+
+      if (Array.isArray(list)) {
+        rows = list.length;
+      }
+    }
+
+    return { query: key, rows, subscribers: Object.keys(subscriptions[key] ?? {}).length };
+  });
+}
+
 /** Every article currently held in the RTK Query cache, across all queries. */
 function collectCachedArticles(state: RootState): Article[] {
   const articles: Article[] = [];
@@ -137,10 +172,16 @@ export function attachConsoleHelpers(store: AppStore): void {
     get: () => collectCachedArticles(store.getState()),
   });
 
+  Object.defineProperty(window, 'cache', {
+    configurable: true,
+    get: () => summariseCache(store.getState()),
+  });
+
   /* eslint-disable no-console -- introducing the helpers is the point */
   console.log(
     '%credux%c console helpers ready\n' +
       '  state      → the whole state tree\n' +
+      '  cache      → one row per cache entry, with its subscriber count\n' +
       '  articles   → articles currently in the RTK Query cache\n' +
       '  store      → dispatch, subscribe, getState\n' +
       "  localStorage.setItem('redux-log','off')  → silence the action log\n" +

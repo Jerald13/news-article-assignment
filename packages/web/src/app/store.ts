@@ -3,7 +3,7 @@ import { setupListeners } from '@reduxjs/toolkit/query';
 import { useDispatch, useSelector } from 'react-redux';
 import type { Article } from '@news/contracts';
 import { articlesApi } from '@/features/articles';
-import { attachConsoleHelpers, loggerMiddleware } from './devtools';
+import { attachConsoleHelpers, loggerMiddleware, type CacheEntrySummary } from './devtools';
 
 /**
  * Build a store.
@@ -81,6 +81,8 @@ declare global {
     readonly state?: RootState;
     /** Development-only getter: articles held in the RTK Query cache. */
     readonly articles?: Article[];
+    /** Development-only getter: one row per cache entry, with its subscriber count. */
+    readonly cache?: CacheEntrySummary[];
   }
 }
 

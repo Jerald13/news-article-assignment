@@ -24,7 +24,8 @@
     "format:check": "prettier --check .",
     "test": "npm run test --workspaces --if-present",
     "verify": "npm run typecheck && npm run lint && npm run format:check && npm run test",
-    "test:e2e": "npm run test:e2e --workspace @news/web"
+    "test:e2e": "npm run test:e2e --workspace @news/web",
+    "screenshots": "node scripts/screenshots.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

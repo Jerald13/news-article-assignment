@@ -13,9 +13,17 @@ import type { AppStore, RootState } from './store';
 const LOG_PREFERENCE_KEY = 'redux-log';
 
 /**
- * RTK Query dispatches a good deal of internal bookkeeping. Logging all of it
- * buries the actions that actually say something, so the noisiest are muted by
- * default. `redux-log` set to `all` shows everything.
+ * RTK Query re-broadcasts its subscriber map on every mount, unmount and hook
+ * render. Measured over five navigations, that bookkeeping was 10 of 18
+ * dispatched actions — enough to bury the four that said anything.
+ *
+ * The filter is therefore about *subscription* plumbing specifically, not
+ * internal actions in general. Anything under `queries/` describes the cache
+ * itself and stays visible, however rarely it fires: `removeQueryResult` is the
+ * only signal that an entry was evicted, and hiding it makes tag invalidation
+ * look like it silently did nothing.
+ *
+ * `redux-log` set to `all` shows everything.
  */
 // Matched as substrings of the action type, and deliberately without the slice
 // name: the reducerPath is `articlesApi`, so a pattern beginning `api/` would
@@ -24,7 +32,6 @@ const MUTED_ACTIONS = [
   'internalSubscriptions/',
   '/config/middlewareRegistered',
   '/subscriptions/unsubscribeQueryResult',
-  '/queries/removeQueryResult',
 ];
 
 type LogMode = 'on' | 'off' | 'all';

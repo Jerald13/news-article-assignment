@@ -40,14 +40,20 @@ npm run build       # production build
 
 ### Inspecting state
 
-Redux DevTools works out of the box — the store is registered as **News Articles**. Without the extension, the store is also on `window` in development:
+Redux DevTools works out of the box — the store is registered as **News Articles**. Without the extension, the store and a few shortcuts are on `window` in development:
 
 ```js
-store.getState(); // the whole tree
-store.getState().articlesApi.queries; // every cached request, its status and its data
+state; // the whole tree
+cache; // one row per cached request, with its subscriber count
+articles; // every article currently held in the cache
+store; // dispatch, subscribe, getState
 ```
 
-Both are development-only and stripped from a production build.
+`cache` is the quickest way to see how the cache actually behaves. Browse to page 2 and page 3, come back to page 1, and `cache` shows three entries — returning to a page you have already seen issues no request at all. The `subscribers` column is what decides what happens next: when a mutation invalidates a tag, an entry someone is watching is **refetched in place** so the list never blanks, while an entry at zero is **dropped from the store**. Delete an article and the three entries collapse to one.
+
+`localStorage.setItem('redux-log', 'all')` adds RTK Query's internal subscription bookkeeping to the action log; `'off'` silences it entirely.
+
+All of it is development-only and stripped from a production build.
 
 ---
 
